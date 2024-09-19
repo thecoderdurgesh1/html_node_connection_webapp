@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Website</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Dummy Website</a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-primary me-2" onclick="showRegisterForm()">Register</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-success" onclick="showLoginForm()">Login</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dummy Content -->
+    <div class="container mt-5">
+        <h1>Welcome to the Dummy Website</h1>
+        <p>This is some dummy content for the website. Replace this with your actual content.</p>
+    </div>
+
+    <!-- Register Form Modal -->
+    <div class="modal" id="registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="fname" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="fname" name="fname">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lname" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lname" name="lname">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="registerUser()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Form Modal -->
+    <div class="modal" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="usernameLogin" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="usernameLogin" name="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordLogin" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="passwordLogin" name="password">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" onclick="loginUser()">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Show Register Form
+        function showRegisterForm() {
+            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.show();
+        }
+
+        // Show Login Form
+        function showLoginForm() {
+            var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+
+        // Register API Call
+        function registerUser() {
+            const data = {
+                fname: document.getElementById('fname').value,
+                lname: document.getElementById('lname').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+            };
+
+            fetch('http://localhost:3000/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'User registered successfully') {
+                        alert('Registration successful!');
+                        // Optionally, close the modal
+                        var registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+                        registerModal.hide();
+                    } else {
+                        alert('Registration failed: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Login API Call
+        function loginUser() {
+            const data = {
+                username: document.getElementById('usernameLogin').value,
+                password: document.getElementById('passwordLogin').value,
+            };
+
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Login successful') {
+                        // Redirect to dashboard
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert('Login failed: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+
+</html>
